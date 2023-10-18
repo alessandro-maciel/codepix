@@ -29,3 +29,13 @@ func (pix *PixUseCase) Register(key string, kind string, account_id string) (*mo
 
 	return pix_key, nil
 }
+
+func (pix *PixUseCase) FindKey(key string, kind string) (*model.PixKey, error) {
+	pix_key, err := pix.PixKeyRepository.FindKeyByKind(key, kind)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pix_key, nil
+}
