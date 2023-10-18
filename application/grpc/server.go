@@ -5,12 +5,23 @@ import (
 	"log"
 	"net"
 
+	"github.com/codeedu/imersao/codepix-go/application/grpc/pb"
+	"github.com/codeedu/imersao/codepix-go/application/usecase"
+	"github.com/codeedu/imersao/codepix-go/infrastructure/repository"
 	"github.com/jinzhu/gorm"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func StartGrpcServer(database *gorm.DB, port int) {
 	grpcServer := grpc.NewServer()
+	reflection.Register(grpcServer)
+
+	pixRepository := repository.PixKeyRepositoryDb{}
+	pixUseCase := usecase.PixUseCase{PixKeyRepository: pixRepository}
+	PixGrpcService := NewPixGrpcService(pixUseCase)
+
+	pb.RegisterPixServiceServer(grpcServer, PixGrpcService)
 
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 	listener, err := net.Listen("tcp", address)
