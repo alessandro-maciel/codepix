@@ -9,11 +9,12 @@ import (
 )
 
 type PixKeyRepositoryInterface interface {
-	RegisterKey(pix_key *PixKey) (*PixKey, error)
-	FindKeyByKind(key string, kind string) (*PixKey, error)
 	AddBank(bank *Bank) error
 	AddAccount(account *Account) error
+	RegisterKey(pix_key *PixKey) (*PixKey, error)
+	FindBank(id string) (*Bank, error)
 	FindAccount(id string) (*Account, error)
+	FindKeyByKind(key string, kind string) (*PixKey, error)
 }
 
 type PixKey struct {
