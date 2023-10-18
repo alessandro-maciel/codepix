@@ -52,7 +52,7 @@ func (t *Transaction) isValid() error {
 		return errors.New("invalid status for the transaction")
 	}
 
-	if t.PixKeyTo.AccountID == t.AccountFromID {
+	if t.AccountFrom.ID == t.PixKeyTo.Account.ID {
 		return errors.New("the source and destination account cannot be the same")
 	}
 
