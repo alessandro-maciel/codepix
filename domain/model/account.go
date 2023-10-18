@@ -9,9 +9,9 @@ import (
 
 type Account struct {
 	Base      `valid:"required"`
-	OwnerName string    `json:"owner_name" gorm:"column:owner_name;type:varchar(255);notnull" valid:"notnull"`
-	Bank      *Bank     `valid:"notnull"`
-	BankID    string    `json:"bank_id" gorm:"column:bank_id;type:uuid;notnull" valid:"-"`
+	OwnerName string    `json:"owner_name" gorm:"column:owner_name;type:varchar(255);not null" valid:"notnull"`
+	Bank      *Bank     `valid:"-"`
+	BankID    string    `json:"bank_id" gorm:"column:bank_id;type:uuid;not null" valid:"-"`
 	Number    string    `json:"number" gorm:"type:varchar(20)" valid:"notnull"`
 	PixKeys   []*PixKey `gorm:"ForeignKey:AccountID" valid:"-"`
 }
@@ -31,6 +31,7 @@ func NewAccount(bank *Bank, number string, ownerName string) (*Account, error) {
 		OwnerName: ownerName,
 		Bank:      bank,
 		Number:    number,
+		BankID:    bank.ID,
 	}
 
 	account.ID = uuid.NewV4().String()
