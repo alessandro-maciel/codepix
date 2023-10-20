@@ -17,11 +17,10 @@ var kafkaCmd = &cobra.Command{
 	Use:   "kafka",
 	Short: "Start consuming transactions using Apache Kafka",
 	Run: func(cmd *cobra.Command, args []string) {
-		deliveryChan := make(chan ckafka.Event)
-		database := db.ConnectDB(os.Getenv("env"))
-		producer := kafka.NewKafkaProducer()
+		deliveryChan := make(chan ckafka.Event)    //canal
+		database := db.ConnectDB(os.Getenv("env")) //banco de dados
+		producer := kafka.NewKafkaProducer()       // producer
 
-		kafka.Publish("Olá Kafka", "teste", producer, deliveryChan)
 		go kafka.DeliveryReport(deliveryChan)
 
 		kafkaProcessor := kafka.NewKafkaProcessor(database, producer, deliveryChan)
