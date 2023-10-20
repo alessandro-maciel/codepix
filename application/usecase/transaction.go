@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"log"
 
 	"github.com/codeedu/imersao/codepix-go/domain/model"
 )
@@ -44,6 +45,39 @@ func (t *TransactionUseCase) Error(transactionId string, reason string) (*model.
 
 	transaction.Status = model.TransactionError
 	transaction.CancelDescription = reason
+
+	err = t.TransactionRepository.Save(transaction)
+	if err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
+}
+
+func (t *TransactionUseCase) Confirm(transactionId string) (*model.Transaction, error) {
+	transaction, err := t.TransactionRepository.Find(transactionId)
+	if err != nil {
+		log.Println("Transaction not found", transactionId)
+		return nil, err
+	}
+
+	transaction.Status = model.TransactionConfirmed
+	err = t.TransactionRepository.Save(transaction)
+	if err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
+}
+
+func (t *TransactionUseCase) Complete(transactionId string) (*model.Transaction, error) {
+	transaction, err := t.TransactionRepository.Find(transactionId)
+	if err != nil {
+		log.Println("Transaction not found", transactionId)
+		return nil, err
+	}
+
+	transaction.Status = model.TransactionCompleted
 
 	err = t.TransactionRepository.Save(transaction)
 	if err != nil {
