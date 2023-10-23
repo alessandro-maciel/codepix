@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/codeedu/imersao/codepix-go/application/factory"
@@ -40,13 +39,14 @@ func (k *KafkaProcessor) Consume() {
 		panic(err)
 	}
 
-	topics := []string{os.Getenv("kafkaTransactionTopic"), os.Getenv("transaction_confirmation")}
+	topics := []string{os.Getenv("kafkaTransactionTopic"), os.Getenv("kafkaTransactionConfirmationTopic")}
 	c.SubscribeTopics(topics, nil)
 
-	log.Println("kafka consumer has been started")
+	fmt.Println("kafka consumer has been started")
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
+			fmt.Println(string(msg.Value))
 			k.processMessage(msg)
 		}
 	}
@@ -58,7 +58,7 @@ func (k *KafkaProcessor) processMessage(msg *ckafka.Message) {
 
 	switch topic := *msg.TopicPartition.Topic; topic {
 	case transactionsTopic:
-		k.processMessage(msg)
+		k.processTransaction(msg)
 	case transactionsConfirmationTopic:
 		k.processTransactionConfirmation(msg)
 	default:
@@ -82,6 +82,7 @@ func (k *KafkaProcessor) processTransaction(msg *ckafka.Message) error {
 		transaction.PixKeyTo,
 		transaction.PixKeyKindTo,
 		transaction.Description,
+		transaction.ID,
 	)
 
 	if err != nil {
