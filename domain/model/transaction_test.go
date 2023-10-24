@@ -30,7 +30,7 @@ func TestNewTransaction(t *testing.T) {
 
 	amount := 3.10
 	statusTransaction := "pending"
-	transaction, err := model.NewTransaction(account, amount, pixKey, "My description")
+	transaction, err := model.NewTransaction(account, amount, pixKey, "My description", "")
 	//
 	require.Nil(t, err)
 	require.NotNil(t, uuid.FromStringOrNil(transaction.ID))
@@ -66,7 +66,7 @@ func TestModel_ChangeStatusOfATransaction(t *testing.T) {
 	pixKey, _ := model.NewPixKey(kind, key, accountDestination)
 
 	amount := 3.10
-	transaction, _ := model.NewTransaction(account, amount, pixKey, "My description", "8734")
+	transaction, _ := model.NewTransaction(account, amount, pixKey, "My description", "")
 
 	transaction.Complete()
 	require.Equal(t, transaction.Status, model.TransactionCompleted)
